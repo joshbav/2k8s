@@ -1,7 +1,8 @@
 ### SETUP SCRIPT FOR TWO K8S CLUSTERS ON DC/OS ("2k8s") 
 Revision 11-17-18
 
-This is a script for Enterprise DC/OS 1.12 that will setup two Kubernetes clusters.
+This is a script for Enterprise DC/OS 1.12 that will setup two Kubernetes clusters  
+This script has only been tested on OS/X and with DC/OS 1.12  
 
 This script will:
 
@@ -10,11 +11,11 @@ This script will:
 2. Install Mesosphere Kubernetes Engine (MKE)
 
 3. Install a K8s cluster named /prod/kubernetes-prod  
-   with 1 private node and 1 public node which will run traefik
-   Configuration: RBAC enabled, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1 
-   Apache and NGINX via host based ingress    
+   with 1 private node and 1 public node which will run traefik  
+   Apache and NGINX via host based ingress   
+   Configuration: RBAC enabled, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
 
-4. Install a K8s cluster named /dev/kubernetes-dev  
+4. Install a K8s cluster named /dev/kubernetes-dev   
    1 private and 0 public nodes, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
 5. Install a Cassandra cluster named /cassandra
 
@@ -30,11 +31,9 @@ Your existing /etc/hosts will be backed up to /tmp/hosts before being modifyed w
 
 Your existing kubectl config file will be moved to /tmp/kubectl-config, so any existing kubectl configs will be removed
 
-Your existing DC/OS cluster configs will be moved to /tmp/clusters because of a bug (that might be fixed) when too many clusters are defined, so any existing cluster configs will be removed
+Your existing DC/OS cluster configs will be moved to /tmp/clusters because of a bug (that might be fixed) when too many clusters are defined, so any existing DC/OS cluster configs will be removed
 
 The DC/OS CLI and kubectl must already be installed
-
-This script has only been tested on OS/X and with DC/OS 1.12
 
 #### SETUP
 
