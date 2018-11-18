@@ -11,26 +11,29 @@ No, because dev-ops doesn’t yet exist yet.
 `kubectl get clusterrolebinding`  
 There’s a lot of them built into kubernetes 
 
-Let’s create another named help-desk-binding: 
+Let’s create another named help-desk-binding:   
 `kubectl create -f dev-ops-cluster-role-binding.yaml`  
 
 Let’s examine it:  
 `kubectl describe clusterrolebinding dev-ops-binding`  
 
-This new role binding uses an existing role named view, let’s look at view:
+This new role binding uses an existing role named view, let’s examine view:  
 `kubectl describe clusterrole view`  
 
 Note it has get, list, and watch permissions, but not describe
 
+Let's see if we can do get pods as dev-ops, which is currently using the built in role view:  
 `kubectl auth can-i get pods --as dev-ops`  
 Yes
 
+Let's see if we can delete pods:  
 `kubectl auth can-i delete pods --as dev-ops`  
-No, it's read only
+No, view is  read only
 
+Let's see if we can describe pods, which is important for dev-ops since that's how you get logs and many other details.  
 `kubectl auth can-i describe pods --as dev-ops`  
 
-No, because describe shows things like secrets and such, so the view role that we used is not a full read-only access method, it’s more limited. But we trust our dev-ops staff, and want them to have read-only access in this namespace. So we want them to be able to describe objects, we just don’t want them to change anything. So let’s create a new role named help-desk that is simply the view role plus the ability to do a describe of objects.
+No, because describe shows things like secrets and such, so the view role that we used is not a full read-only access method, it’s more limited. But we trust our dev-ops staff, and want them to have full read-only access in this namespace. So we want them to be able to describe objects, we just don’t want them to change anything. So let’s create a new role named help-desk that is simply the view role plus the ability to do describes.
 
 `kubectl create -f dev-ops-cluster-role.yaml`  
 
@@ -38,13 +41,14 @@ No, because describe shows things like secrets and such, so the view role that w
 
 Now that we’ve created the role, we have to bind it to a user (actually a service account) like we did before in order for it to be put to use. So let’s delete the old binding that used the view role first since we will soon replace it:
 
-`kubectl delete clusterrolebinding dev-ops-binding`  
+`kubectl delete -f dev-ops-cluster-role-binding.yaml`  
+We told kubectl to look at the file, get all objects within it, and delete them from the K8s cluster. We could have also done a "kubectl delete clusterrolebinding dev-ops-binding" command.
 
-And now we will create the v2 of the help-desk binding:
+And now we will create the v2 of the help-desk binding that uses the new dev-ops role that is defined in this file:  
 
 `kubectl create -f dev-ops-cluster-role-binding2.yaml`  
 
-Now let’s see if help-desk is allowed to describe a pod:
+Now let’s try again to see if dev-ops is allowed to describe a pod:
 
 `kubectl auth can-i describe pods --as dev-ops`  
 
