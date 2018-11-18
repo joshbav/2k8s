@@ -5,9 +5,11 @@ Goal: create new role named help-desk, using existing cluster role binding view,
 
 Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to configure RBAC.
 
+Let's test if the dev-ops user (actually service account) can do 'kubectl get pod' commands:  
 `kubectl auth can-i get pods --as dev-ops`  
 No, because the dev-ops user (actually service account) doesn’t yet exist yet.
 
+Let's list all the existing cluster roles bindings:  
 `kubectl get clusterrolebinding`  
 There’s a lot of them built into kubernetes.
 
@@ -19,7 +21,6 @@ Let’s examine it:
 
 This new role binding uses an existing role named view, let’s examine view:  
 `kubectl describe clusterrole view`  
-
 Note it has get, list, and watch permissions, but not describe.
 
 Let's see if we can do get pods as dev-ops, which is currently using the built in role view:  
