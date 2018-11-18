@@ -9,12 +9,12 @@ Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to configu
 No, because dev-ops doesn’t yet exist yet. 
 
 `kubectl get clusterrolebinding`  
-There’s a lot of them built into kubernetes
-Let’s create another named help-desk-binding:
+There’s a lot of them built into kubernetes 
 
+Let’s create another named help-desk-binding: 
 `kubectl create -f dev-ops-cluster-role-binding.yaml`  
 
-Let’s examine it:
+Let’s examine it:  
 `kubectl describe clusterrolebinding dev-ops-binding`  
 
 This new role binding uses an existing role named view, let’s look at view:
