@@ -1,7 +1,7 @@
 {
   "service": {
-    "service_account": "kubernetes-manager",
-    "service_account_secret": "kubernetes-manager/sa"
+    "service_account": "kubernetes",
+    "service_account_secret": "kubernetes/sa"
   },
   "mesosphere_kubernetes_engine": {
     "resources": {

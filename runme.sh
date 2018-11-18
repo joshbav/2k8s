@@ -1,26 +1,9 @@
 #!/bin/bash
 
-# left off: traefik, try stock config
-# CCM cluster of 10 private and 1 public node
-
+###### TEMPORARY SECTION
 # list files, document their differences
 # todo: pull in other todos, version
-# groups and users for dev and prod
-# ccm priv key
-# mke to get options with sa
-# look at runme
-# rename to runme
-# doc kubectl change context, make it part of the script
-# cleanup: delete keys
 # what permissions does MKE need in its service account? is it for a team's k8s, or for all k8s?
-
-# make directions: ccm req, git clone, ssh key, license, example, how to demo it. 
-# explain why elb is needed, why kubectl is moved 
-# adds a binary secret
-# creates dev and prod groups, and dev-user and prod-user, password deleteme
-
-# prod options: stock except for kube CPU's lowered to 1, public node count raised to 1, calico cidr set to 192.168.100.0/24, no rbac!
-
 # new prod: rbac, controplane cpu lowered to 0.5, priv reserved kube cpus lowered to 1, public node count raised to 1, 
 
 
@@ -34,6 +17,7 @@ K8S_MKE_VERSION="2.0.0-1.12.1"
 K8S_PROD_VERSION="2.0.0-1.12.1"
 K8S_DEV_VERSION="2.0.0-1.12.1"
 CASSANDRA_VERSION="2.3.0-3.0.16"
+JENKINS_VERSION="3.5.2-2.107.2"
 SSH_KEY_FILE="/Users/josh/ccm-priv.key"
 DCOS_USER="bootstrapuser"
 DCOS_PASSWORD="deleteme"
@@ -73,17 +57,19 @@ echo "  2. Kubernetes (MKE) v$K8S_MKE_VERSION"
 echo
 echo "  3. A v$K8S_PROD_VERSION K8s cluster named /prod/kubernetes-prod"
 echo "     this cluster will have 1 public node which will run traefik,"
-echo "     and apache and NGINX"
+echo "     and 1 private node running apache and NGINX"
 echo
 echo "  4. A v$K8S_DEV_VERSION K8s cluster named /dev/kubernetes-dev"
 echo
 echo "  5. A v$CASSANDRA_VERSION cassandra cluster named /cassandra"
 echo
-echo "  6. An allocation load /allocation-load so the dashboard stats are not flat" 
+echo "  6. A v$JENKINS_VERSION Jenkins named /dev/jenkins"
 echo
-echo "  7. A license file named $LICENSE_FILE, if it exists"
+echo "  7. An allocation load /allocation-load so the dashboard stats are not flat" 
 echo
-echo "  8. The SSH key $SSH_KEY_FILE via ssh-add, if it exists"
+echo "  8. A license file named $LICENSE_FILE, if it exists"
+echo
+echo "  9. The SSH key $SSH_KEY_FILE via ssh-add, if it exists"
 echo
 echo "Your existing kubectl config file will be moved to /tmp/kubectl-config"
 echo
@@ -193,9 +179,10 @@ dcos security secrets create-sa-secret --strict /tmp/edge-lb-private-key.pem edg
 # TODO DEBUG Getting error on next line, says already part of group
 dcos security org groups add_user superusers edge-lb-principal
 
-dcos package install --package-version=$EDGE_LB_VERSION --options=edgelb-options.json edgelb --yes
+# TODO: later add --package-version, it doesn't work at the moment
+dcos package install --options=edgelb-options.json edgelb --yes
 # Is redundant but harmless
-dcos package install edgelb --package-version=$EDGE_LB_VERSION --cli --yes
+dcos package install edgelb --cli --yes
 
 #### WAIT FOR EDGE-LB TO INSTALL
 
@@ -204,7 +191,7 @@ dcos package install edgelb --package-version=$EDGE_LB_VERSION --cli --yes
 echo
 echo "**** Waiting for Edge-LB to install"
 echo
-sleep 20
+sleep 30
 echo "     Ignore any 404 errors on next line that begin with  dcos-edgelb: error: Get https://"
 until dcos edgelb ping; do sleep 3 & echo "still waiting..."; done
 
@@ -263,7 +250,7 @@ else
     echo
 fi
 
-echo "**** Adding entries to /etc/hosts for www.apache.test and www.nginx.test"
+echo "**** Adding entries to /etc/hosts for www.apache.test and www.nginx.test for $EDGELB_PUBLIC_AGENT_IP"
 echo "     sudo may be needed, please enter your root password if prompted"
 
 echo "$EDGELB_PUBLIC_AGENT_IP www.apache.test" >> /etc/hosts
@@ -275,7 +262,7 @@ echo "$EDGELB_PUBLIC_AGENT_IP www.nginx.test" >> /etc/hosts
 echo
 echo "**** Creating service account for MKE /kubernetes"
 echo
-bash setup_security_kubernetes-cluster.sh kubernetes kubernetes
+bash setup_security_kubernetes-cluster.sh kubernetes kubernetes kubernetes
 echo
 echo "**** Installing MKE /kubernetes"
 echo
@@ -298,7 +285,6 @@ echo "**** Installing /prod/kubernetes-prod K8s cluster, v$K8S_PROD_VERSION usin
 echo "     This cluster has 1 private kubelet, and 1 public kubelet"
 echo
 dcos kubernetes cluster create --package-version=$K8S_PROD_VERSION --options=kubernetes-prod-options.json --yes
-# TODO: calico: "192.168.100.0/24", 1 public node.
 # dcos kubernetes cluster debug plan status deploy --cluster-name=prod/kubernetes-prod
 
 #### SETUP SERVICE ACCOUNT FOR /DEV/KUBERNETES-DEV AND INSTALL K8S
@@ -312,7 +298,28 @@ echo "**** Installing /dev/kubernetes-dev K8s cluster, v$K8S_DEV_VERSION using k
 echo
 dcos kubernetes cluster create --package-version=$K8S_DEV_VERSION --options=kubernetes-dev-options.json --yes
 # dcos kubernetes cluster debug plan status deploy --cluster-name=dev/kubernetes-dev
-# TODO document diff
+
+#### INSTALL /DEV/JENKINS
+
+echo
+echo "**** Installing Jenkins v$JENKINS_VERSION to /dev"
+echo
+dcos package install jenkins --package-version=$JENKINS_VERSION --options=jenkins-options.json --yes 
+
+#### INSTALL CASSANDRA
+
+echo
+echo
+echo "**** Installing Cassandra v$CASSANDRA_VERSION to /"
+echo
+# Using all defaults 
+dcos package install cassandra --package-version=$CASSANDRA_VERSION --yes
+# In case it was installed manually before running this script,
+# which I do sometimes since I often terminate a node in AWS to show
+# cassandra repairing, we will now install the CLI. So the above install of cassandra 
+# will report it's already installed, but since it was installed from the GUI the CLI
+# isn't yet installed. 
+dcos package install cassandra --package-version=$CASSANDRA_VERSION --cli --yes
 
 #### WAIT FOR BOTH K8S CLUSTERS TO COMPLETE THEIR INSTALL
 
@@ -342,19 +349,17 @@ echo
 seconds=0
 OUTPUT=1
 while [ "$OUTPUT" != 0 ]; do
-  sleep 10
   seconds=$((seconds+10))
   printf "Waited $seconds seconds for Kubernetes to start. Still waiting.\n"
   OUTPUT=`dcos kubernetes cluster debug plan status deploy --cluster-name=dev/kubernetes-dev | grep kube-control-plane-0 | awk '{print $4}'`;
   if [ "$OUTPUT" = "(COMPLETE)" ];then
         OUTPUT=0
   fi
+  sleep 10
 done
 echo
 echo "**** /dev/kubernetes-dev install complete"
 echo
-# sleep 5 more just to be safe
-sleep 5
 
 #### SETUP KUBECTL FOR /PROD/KUBERNETES-PROD
 
@@ -456,20 +461,6 @@ dcos security org groups grant dev dcos:secrets:list:default:/ read
 # Make the marathon folder by making the app
 dcos marathon app add dev-example-marathon-app.json
 
-#### INSTALL CASSANDRA
-
-echo
-echo
-echo "**** Installing cassandra v$CASSANDRA_VERSION"
-echo
-dcos package install cassandra --package-version=$CASSANDRA_VERSION --yes
-# In case it was installed manually before running this script,
-# which I do sometimes since I often terminate a node in AWS to show
-# cassandra repairing, we will now install the CLI. So the above install of cassandra 
-# will report it's already installed, but since it was installed from the GUI the CLI
-# isn't yet installed. 
-dcos package install cassandra --package-version=$CASSANDRA_VERSION --cli --yes
-
 #### INSTALL ALLOCATION LOAD SO THE DASHBOARD ISN'T FLAT
 
 dcos marathon app add allocation-load.json
@@ -486,6 +477,7 @@ rm -f public-key.pem 2> /dev/null
 echo
 echo "**** Running chown -RH on ~/.kube and ~/.dcos since this script is ran via sudo"
 echo
+# If you ever break out of this script, you must run these 2 commands via sudo:
 chown -RH $USER ~/.kube
 chown -RH $USER ~/.dcos
 

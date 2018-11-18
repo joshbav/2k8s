@@ -1,0 +1,112 @@
+
+# Following some of the configuration best practices per: https://kubernetes.io/docs/concepts/configuration/overview/
+
+# best practice: Create a Service before its corresponding backend workloads (Deployments or ReplicaSets), and before any workloads that need to access it.
+
+# resource quota, but for what? a particular pod?
+
+# use api reference for all values of all objects
+
+# an ingress that rewrites a url perhaps?
+# daemoset, job, statefulset, endpoint, ingress, service, configmap, secret, persistentvolumeclaim, storageclass, volume, volumeattachment, limitrange, initializerconfiguration, podtemplate, poddisrupttionbudge, priorityclass, podpreset, podsecuritypolidy, 
+# left off on: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#-strong-cluster-apis-strong-
+
+#https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity-beta-feature
+
+### what not to use, but to comment it out:
+# hostPort = When you bind a Pod to a hostPort there are a limited number of places that pod can be scheduled. In most cases, hostPort is unnecessary, try using a Service object to expose your Pod. If you do require hostPort then you can only schedule as many Pods as there are nodes in your Kubernetes cluster.
+
+
+
+
+*********
+
+resources:
+  limits:
+    cpu: "1"
+    memory: "4Gi"
+  requests:
+    cpu: "0.5"
+    memory: "500Mi"
+
+***********
+todo: remove RC, add deployment, add pod, add sigterm and such (in gdoc), 
+annotation, label, namespace:default, 
+https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+
+pod disruption budget, RollingUpdate, restart policy, 
+default: Deployment can ensure that only a certain number of Pods may be down while they are being updated. By default, it ensures that at least 25% less than the desired number of Pods are up (25% max unavailable).
+Deployment can also ensure that only a certain number of Pods may be created above the desired number of Pods. By default, it ensures that at most 25% more than the desired number of Pods are up (25% max surge).
+
+
+configmap, define container by digest but comment out image name,
+
+
+pod hostname
+commented: 
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  imagePullPolicy:
+********
+
+##### deployment definition goes here
+
+#Deployment is a higher-level concept that manages ReplicaSets and provides declarative updates to pods along with a lot of other useful features. 
+
+# A Deployment controller provides declarative updates for Pods and ReplicaSets.
+#You describe a desired state in a Deployment object, and the Deployment controller changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
+
+add a .spec section
+
+https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+
+postStart and preStop handlers:
+https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
+
+#Kubernetes sends the postStart event immediately after the Container is created. There is no guarantee, however, that the postStart handler is called before the Container’s entrypoint is called. The postStart handler runs asynchronously relative to the Container’s code, but Kubernetes’ management of the container blocks until the postStart handler completes. The Container’s status is not set to RUNNING until the postStart handler completes.
+
+#Kubernetes only sends the preStop event when a Pod is terminated. This means that the preStop hook is not invoked when the Pod is completed.
+
+terminationGracePeriodSeconds
+
+.spec.revisionHistoryLimit is an optional field that specifies the number of old ReplicaSets to retain to allow rollback.
+
+
+
+
+
+******** replace this with a replicaset, rc's are obsolete
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: example-app
+spec:
+  replicas: 1
+  selector:
+    app: example-app
+  template:
+    metadata:
+      name: example-app
+      labels:
+        app: example-app
+    spec:
+      containers:
+      - name: example-app
+        image: smugcloud/hello-node
+        ports:
+        - containerPort: 9000
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: example-app
+spec:
+  selector:
+    app: example-app
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 32000
+      targetPort: 9000
+  type: NodePort

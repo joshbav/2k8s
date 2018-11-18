@@ -1,0 +1,220 @@
+#### THIS IS A MESSY WORK IN PROGRESS, I INTEND TO CLEAN IT UP
+
+
+# TODO: configmap, ref: https://github.com/kubernetes/kubernetes/issues/22368
+# show example use, but mention that they aren't as useful as people assume, 
+# and modifying the deployment's env vars seems to be more popular
+
+
+# yaml can be very unforgiving, here's a good online validator to use:  
+#   http://yaml-online-parser.appspot.com/
+#   but it does not like multiple yaml docs, so cut each doc at the --- line before submitting
+#   leave the default output of json, since kubernetes converts yaml to json internally
+# also consider kubectrl -f <file or url> --dry-run
+---
+apiVersion: apps/v1
+# Deployments are a higher-level concept that manages ReplicaSets and provides declarative updates to pods 
+# along with a lot of other useful features. There is no reason not to use them in production.
+kind: Deployment
+metadata:
+  name: apache-deployment
+  labels:
+    app: apache
+spec:
+  # To avoid one ReplicaSet overwriting the past copies of others
+  # see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#revision-history-limit  
+  # and the old default of 2 was too low, new default is 10.
+  revisionHistoryLimit: 20
+  # In production you would likely not use 1 replica, this is for demo purposes
+  replicas: 1
+  # Allow this Deployment/ReplicaSet/Pod(s) to be found via an app=apache
+  selector:
+    matchLabels:
+      app: apache
+  strategy:
+    # The type of update done on this deployment will be a rolling update
+    type: RollingUpdate
+    rollingUpdate:
+      # 3 more pods than the current replica value is allowed during an update
+      maxSurge: 3
+      # During an update only 1 pod can be unavailable at a time
+      maxUnavailable: 1  
+  # This is a pod template created by the deployment, from this a replicaset will be created automatically
+  template:
+    metadata:
+      labels:
+        app: "apache"
+        prod: "true"
+        test: "false"
+      annotations:
+        build-time: "Nov-14-2018, 1:30pm"
+        jenkins-job-id: "jenkins-1234"
+        deploy-time: "Nov-14-2018, 1:53pm"
+    spec:
+      # This will tell the scheduler to prefer (not require) one pod per node until 
+      #  that's no longer possible, only then a node with an existing pod will receive a second instance. 
+      # Note antiaffinity doesn't scale very well and can only be used in clusters up to a 
+      #  few hundred nodes in Kubernetes 1.11 
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1       
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - apache
+                topologyKey: kubernetes.io/hostname
+      # If a node is tainted with example-taint:true then don't deploy to it 
+      tolerations: 
+      - key: "example-taint"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      containers:
+      - name: apache
+        # Pulling an image by digest instead of tag makes things immutable, but we're not doing that here. 
+        image: httpd
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: EXAMPLE-NORMAL-VARIABLE
+          value: "This-is-a-normal-injected-variable"
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: apache-secret
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: apache-secret
+              key: password
+        resources:
+          requests:
+            # A node must have 4gig of storage to provide the pod
+            # Beta in Kubernetes 1.11
+            cpu: 0.1
+            ephemeral-storage: 1Gi
+            memory: 0.1G 
+          limits:
+            # 0.1 CPU is used for this particular example
+            cpu: 0.2
+            memory: 0.2G
+            ephemeral-storage: 2Gi
+        livenessProbe:
+          # A liveness probe is ran during the container's lifecycle as a health check
+          httpGet:
+            path: /
+            port: 80
+            httpHeaders:
+            - name: X-Custom-Header
+              value: k8s-liveness-probe
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          # Since this is a specific autoscale lab use case where the web server is slow
+          #  so as to make a lot of CPU use, we want a long timeout
+          timeoutSeconds: 10
+        readinessProbe:
+          # Is different than a liveness probe, one difference is that a failure triggers
+          # traffic to not be routed to the pod, but it takes a failed liveness probe before
+          # the pod is killed/replaced. Also, traffic is only sent to a pod after a readiness 
+          # probe succeeds, unlike a liveness probe, so if a pod takes a while to initialize
+          # we don't want any traffic going to it until it's ready. 
+          # Readiness probes are quite useful for large java apps that take time to initialize.  
+          # Use a readiness probe in production.
+          httpGet:
+            path: /
+            port: 80
+            httpHeaders:
+            - name: X-Custom-Header
+              value: k8s-readiness-probe
+          initialDelaySeconds: 5
+          # Since this is a specific autoscale lab use case where the web server is slow
+          #  so as to make a lot of CPU use, we want a long timeout
+          timeoutSeconds: 10
+          failureThreshold: 3
+        lifecycle:
+          postStart:
+            exec:
+              # Can be used to do commands not in the container's entrypoint
+              # Can be useful for diagnostics
+              # Note there is no guarantee it's called before the container's entrypoint!
+              command: ["/bin/sh", "-c", "echo Hello from the postStart handler"]
+          preStop:
+            exec:
+              # Can be used to trigger a graceful shutdown, such as stopping services
+              # Is only used when a pod is terminated. When a pod completes it's not called.
+              # This hook is called immediately before a container is terminated. 
+              # No parameters are passed to the handler. This event handler is blocking, and must 
+              #  complete before the call to delete the container is sent to the Docker daemon. 
+              # The SIGTERM notification sent by Docker is also still sent.
+              command: ["/bin/sh", "-c", "echo Hello from the preStop handler"]
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: apache-secret
+data:
+  # Note secrets must always be in base64, I created this via: echo my-example-user-name |base64
+  # To test it, take the value and decode it with echo bXktZXhhbXBsZS11c2VyLW5hbWUK |base64 --decode
+  username: bXktZXhhbXBsZS11c2VyLW5hbWUK
+  password: bXktZXhhbXBsZS1wYXNzd29yZAo=
+---
+apiVersion: v1
+kind: Service
+# A service is an abstraction which defines a logical set of Pods and a policy by which to access them.
+# For Kubernetes-native applications a simple Endpoints API is updated whenever the set of Pods 
+#   in a Service changes. For non-native applications, Kubernetes offers a virtual-IP-based bridge 
+#   to Services which redirects to the backend Pods. Is a layer 4 construct. 
+#
+# An ingress controller is a collection of routing rules that govern how external users 
+#  access services running in a Kubernetes cluster. Is a layer 7 construct. 
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-service
+spec:
+  ports:
+  - name: http
+    targetPort: 80
+    port: 80
+  selector:
+    app: apache
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apache-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: www.apache.test
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: apache-service
+          servicePort: http
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+# Cluster managers, hosting providers, etc should use tools which respect Pod Disruption Budgets 
+#   by calling the Eviction API instead of directly deleting pods, for voluntary actions.
+# Involuntary actions also count against the budget. 
+# The kubectl drain command utilized pod disruption budgets
+# Pods which are deleted or unavailable due to a rolling upgrade to an application do count 
+#   against the disruption budget, but controllers (like deployment and stateful-set) are not 
+#   limited by PDBs when doing rolling upgrade.
+metadata:
+  name: apache-pdb
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: apache
+

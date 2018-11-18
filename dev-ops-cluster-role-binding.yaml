@@ -1,0 +1,25 @@
+# Subjects are users (human or machine), or groups of users
+# Note Kubernetes does not have user accounts integrated by default, only Service Accounts
+# In practice, a service account is managed just like a regular user.
+# Role Bindings define what Subjects have what Roles
+# This example binds the dev-ops user to the built in ClusterRole of view
+#
+# kubectl get clusterrolebinding
+# kubectl describe clusterrolebinding dev-ops-binding
+# kubectl auth can-i get pods --as dev-ops
+# kubectl auth can-i delete pods --as dev-ops
+---
+# Note a ClusterRoleBinding is cluster-wide, thus no namespace specified
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: dev-ops-binding
+subjects:
+- kind: User
+  name: dev-ops
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  # View is a built in read-only role. kubectl describe clusterrole view
+  name: view
+  apiGroup: rbac.authorization.k8s.io
