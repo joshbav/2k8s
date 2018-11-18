@@ -69,8 +69,9 @@ This is an incomplete section, ignore it.
 
 1. Deploy older cassandra via GUI before running script, then in AWS kill instance with node 1.
 
-2. Run script.
-begin demo
+2. Run script. 
+
+Begin demo
 
 3. Explain HDMK, show RBAC, secrets, etc.
 
