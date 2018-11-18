@@ -78,7 +78,7 @@ Begin demo
 4. Upgrade dev k8s  
    dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
    Switch to GUI, talk about it  
-   TODO: why doens't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
+   TODO: why doesn't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
 
 4. Enable HA on dev k8's via GUI.
 
