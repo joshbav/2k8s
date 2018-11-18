@@ -31,7 +31,7 @@ This script will:
 
 Your existing kubectl config file will be moved to /tmp/kubectl-config
 
-Your existing /etc/hosts will be backed up to /tmp/hosts before being modifyed with new entries for www.apache.test and www.nginx.test
+Your existing /etc/hosts will be backed up to /tmp/hosts before being modified with new entries for www.apache.test and www.nginx.test
 
 Your existing kubectl config file will be moved to /tmp/kubectl-config, so any existing kubectl configs will be removed
 
