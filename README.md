@@ -79,7 +79,7 @@ begin demo
 7. Login as dev-user (pw=deleteme) using an incognito window to show limted access, 
    also show secrets (TODO: fix permissions, doesn't yet work)
 8. cassandra demo:  
-   dcos cassandra --name=/cassandra pod replace node-1 
+   dcos cassandra --name=/cassandra pod replace node-1  
    wait 10  
    dcos cassandra --name=/cassandra plan status recovery  
    dcos cassandra --name=/cassandra update start --package-version=2.4.0-3.0.16  

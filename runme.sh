@@ -5,7 +5,7 @@
 # todo: pull in other todos, version
 # what permissions does MKE need in its service account? is it for a team's k8s, or for all k8s?
 # new prod: rbac, controplane cpu lowered to 0.5, priv reserved kube cpus lowered to 1, public node count raised to 1, 
-
+# incorporate k8s autoscaler demo
 
 
 ######## VARIABLES ########
@@ -325,8 +325,11 @@ dcos package install cassandra --package-version=$CASSANDRA_VERSION --cli --yes
 
 echo
 echo "**** Sleeping for 330 seconds before testing if K8s install of /prod/kubernetes-prod is done,"
-echo "     since it takes a while for kubernetes to be installed"
+echo "     since it takes a while for kubernetes to be installed (~ 360 seconds)"
 echo
+# Sometimes I open another shell while waiting, since this is the biggest delay,
+# so let's fix the dcos cli and kubectl now (and at the end of the script)
+chown -RH $USER ~/.kube ~/.dcos
 sleep 330
 seconds=330
 OUTPUT=1
@@ -467,8 +470,8 @@ dcos marathon app add allocation-load.json
 
 #### INSTALL MARATHON NGINX EXAMPLE, AND A LOAD AGAINST IT
 
-dcos marathon app add nginx-example.json
-dcos marathon app add nginx-load.json
+dcos marathon app add nginx-marathon-example.json
+dcos marathon app add nginx-marathon-load.json
  
 #### CLEANUP, FIX DCOS CLI AND KUBECTL FILE OWNERSHIP BECAUSE OF SUDO
 
@@ -483,8 +486,7 @@ echo
 echo "**** Running chown -RH on ~/.kube and ~/.dcos since this script is ran via sudo"
 echo
 # If you ever break out of this script, you must run these 2 commands via sudo:
-chown -RH $USER ~/.kube
-chown -RH $USER ~/.dcos
+chown -RH $USER ~/.kube ~/.dcos
 
 echo
 echo
