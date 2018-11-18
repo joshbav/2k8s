@@ -202,7 +202,7 @@ echo "**** Deploying Edge-LB config from edgelb-kubectl-two-clusters.json"
 echo
 dcos edgelb create edgelb-kubectl-two-clusters.json
 echo
-echo "**** Sleeping for 30 seconds since it takes some time for EdgeLB's config to load"
+echo "**** Sleeping for 30 seconds since it takes some time for Edge-LB's config to load"
 echo
 sleep 30
 echo
@@ -464,6 +464,11 @@ dcos marathon app add dev-example-marathon-app.json
 #### INSTALL ALLOCATION LOAD SO THE DASHBOARD ISN'T FLAT
 
 dcos marathon app add allocation-load.json
+
+#### INSTALL MARATHON NGINX EXAMPLE, AND A LOAD AGAINST IT
+
+dcos marathon app add nginx-example.json
+dcos marathon app add nginx-load.json
  
 #### CLEANUP, FIX DCOS CLI AND KUBECTL FILE OWNERSHIP BECAUSE OF SUDO
 
