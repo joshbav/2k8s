@@ -1,7 +1,7 @@
 #### A K8S RBAC TUTORIAL
 Revision 11-17-18 
 
-Goal: create new role named help-desk, using existing cluster role binding view, then change its role to a new role we will create that has more access but it still read only.
+Goal: create new role named dev-ops, using existing cluster role binding view, then change its role to a new role we will create that has more access but it still read only.
 
 Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to configure RBAC.
 
@@ -44,12 +44,12 @@ Now that we’ve created the role, we have to bind it to a user (actually a serv
 `kubectl delete -f dev-ops-cluster-role-binding.yaml`  
 We told kubectl to look at the file, get all objects within it, and delete them from the K8s cluster. We could have also done a "kubectl delete clusterrolebinding dev-ops-binding" command.
 
-And now we will create the v2 of the help-desk binding that uses the new dev-ops role that is defined in this file:  
+And now we will create the v2 of the dev-ops binding that uses the new dev-ops role that is defined in this file:  
 `kubectl create -f dev-ops-cluster-role-binding2.yaml`  
 
 Now let’s try again to see if dev-ops is allowed to describe a pod:
 `kubectl auth can-i describe pods --as dev-ops`  
-Yes, help-desk can now describe pods (and all other objects).
+Yes, dev-ops can now describe pods (and all other objects).
 
 We’re done. We created a cluster role named dev-ops by copying the default role of view,  adding the describe verb to it. We then bound that role to a (non-existent) user (actually service account) named dev-ops, and used the ‘auth can-i’ feature of kubectl to test what the user dev-ops could do using the new dev-ops role, and verified they could use the describe command, which shows lots of details that dev-ops people often need.  
 
