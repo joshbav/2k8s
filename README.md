@@ -16,13 +16,14 @@ This script will:
 
 4. Install a K8s cluster named /dev/kubernetes-dev   
    1 private and 0 public nodes, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
+
 5. Install a Cassandra cluster named /cassandra  
    With stock configuration (3 nodes)  
 
-6. Install Jenkins named /dev/jenkins  
+6. Install Jenkins to Marathon named /dev/jenkins  
    With Jenkins master CPU lowered to 0.2  
 
-7. Install an allocation load named /allocation-load so the dashboard entires are not flat
+7. Install an allocation loader to Marathon named /allocation-load so the dashboard entires are not flat
 
 8. Install a DC/OS license file, if it exists
 
