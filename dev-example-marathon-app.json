@@ -1,0 +1,35 @@
+{
+  "id": "/dev/simple-example-app",
+  "backoffFactor": 1.15,
+  "backoffSeconds": 1,
+  "cmd": "sleep 1000000",
+  "container": {
+    "type": "MESOS",
+    "volumes": []
+  },
+  "cpus": 0.1,
+  "disk": 0,
+  "instances": 0,
+  "maxLaunchDelaySeconds": 3600,
+  "mem": 128,
+  "gpus": 0,
+  "networks": [
+    {
+      "mode": "host"
+    }
+  ],
+  "portDefinitions": [],
+  "requirePorts": false,
+  "upgradeStrategy": {
+    "maximumOverCapacity": 1,
+    "minimumHealthCapacity": 1
+  },
+  "killSelection": "YOUNGEST_FIRST",
+  "unreachableStrategy": {
+    "inactiveAfterSeconds": 0,
+    "expungeAfterSeconds": 0
+  },
+  "healthChecks": [],
+  "fetch": [],
+  "constraints": []
+}

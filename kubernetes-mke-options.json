@@ -1,0 +1,12 @@
+{
+  "service": {
+    "service_account": "kubernetes-manager",
+    "service_account_secret": "kubernetes-manager/sa"
+  },
+  "mesosphere_kubernetes_engine": {
+    "resources": {
+      "cpus": 0.5,
+      "mem": 1024
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "service": {
+    "sleep": 1000,
+    "service_account": "kubernetes-dev",
+    "service_account_secret": "dev/kubernetes-dev/sa",
+    "virtual_network_name": "dcos",
+    "log_level": "INFO",
+    "name": "dev/kubernetes-dev"
+  },
+  "kubernetes": {
+    "authorization_mode": "AlwaysAllow",
+    "high_availability": false,
+    "use_agent_docker_certs": false,
+    "service_cidr": "10.100.0.0/16",
+    "control_plane_placement": "[[\"hostname\", \"UNIQUE\"]]",
+    "control_plane_reserved_resources": {
+      "cpus": 1,
+      "mem": 4096,
+      "disk": 10240
+    },
+    "private_node_count": 1,
+    "private_node_placement": "",
+    "private_reserved_resources": {
+      "kube_cpus": 1,
+      "kube_mem": 2048,
+      "kube_disk": 10240,
+      "system_cpus": 1,
+      "system_mem": 1024
+    },
+    "public_node_count": 0,
+    "public_node_placement": "",
+    "public_reserved_resources": {
+      "kube_cpus": 0.5,
+      "kube_mem": 512,
+      "kube_disk": 2048,
+      "system_cpus": 1,
+      "system_mem": 1024
+    }
+  },
+  "calico": {
+    "calico_ipv4pool_cidr": "192.168.0.0/16",
+    "cni_mtu": 1400,
+    "ip_autodetection_method": "can-reach=9.0.0.0",
+    "ipv4pool_ipip": "Always",
+    "felix_ipinipmtu": 1420,
+    "felix_ipinipenabled": true,
+    "typha": {
+      "enabled": false,
+      "replicas": 3
+    }
+  },
+  "etcd": {
+    "cpus": 0.5,
+    "mem": 1024,
+    "data_disk": 3072,
+    "wal_disk": 512,
+    "disk_type": "ROOT"
+  }
+}
