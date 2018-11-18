@@ -92,7 +92,7 @@ begin demo
    dcos cassandra --name=/cassandra update status (show 4th node is being added) 
 9. Upgrade dev k8s  
    dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
-   Switch to GUI, talk about it
+   Switch to GUI, talk about it  
    TODO: why doens't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
 10. Increase private node count in prod k8s to 2 via GUI
 11. Enable HA on dev k8's, not prod. 
