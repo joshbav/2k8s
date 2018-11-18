@@ -68,16 +68,27 @@ The DC/OS CLI and kubectl must already be installed
 This is an incomplete section, ignore it.
 
 1. Deploy older cassandra via GUI before running script, then in AWS kill instance with node 1.
+
 2. Run script.
 begin demo
+
 3. Explain HDMK, show RBAC, secrets, etc.
-4. 
+
+4. Upgrade dev k8s  
+   dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
+   Switch to GUI, talk about it  
+   TODO: why doens't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
+
+4. Enable HA on dev k8's via GUI.
+
 6. kubectl get nodes  (is already in prod context)  
    kubectl get deploy  
    kubectl get pod  
    kubectl get ds -n kube-system |grep traefik  
+
 7. Login as dev-user (pw=deleteme) using an incognito window to show limted access, 
    also show secrets (TODO: fix permissions, doesn't yet work)
+
 8. cassandra demo:  
    dcos cassandra --name=/cassandra pod replace node-1  
    wait 10  
@@ -91,14 +102,15 @@ begin demo
    go to GUI and add a cassandra node  
    wait 10  
    dcos cassandra --name=/cassandra update status (show 4th node is being added) 
-9. Upgrade dev k8s  
-   dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
-   Switch to GUI, talk about it  
-   TODO: why doens't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
+
 10. Increase private node count in prod k8s to 2 via GUI
-11. Enable HA on dev k8's via GUI. 
+
+11. K8s self healing demo https://github.com/ably77/dcos-se/tree/master/Kubernetes/mke#automated-self-healing  
+
 12. Show nodes screen and dashboard
+
 13. Show Networking -> Services Addresses -> nginx-example.marathon:80, select Connection Latency drop down
+
 14. [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
 
 
