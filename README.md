@@ -2,7 +2,7 @@
 Revision 11-17-18
 
 This is a script for Enterprise DC/OS 1.12 that will setup two Kubernetes clusters  
-This script has only been tested on OS/X and with DC/OS 1.12  
+This script has only been tested on OS X and with DC/OS 1.12  
 
 This script will:
 
