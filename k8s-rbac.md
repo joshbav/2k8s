@@ -5,7 +5,7 @@ Goal: create new role named help-desk, using existing cluster role binding view,
 
 Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to configure RBAC.
 
-`kubectl auth can-i get pods --as dev-ops` 
+`kubectl auth can-i get pods --as dev-ops`  
 No, because dev-ops doesn’t yet exist yet. 
 
 `kubectl get clusterrolebinding` 
