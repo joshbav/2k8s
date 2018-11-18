@@ -11,9 +11,8 @@ This script will:
 2. Install Mesosphere Kubernetes Engine (MKE)
 
 3. Install a K8s cluster named /prod/kubernetes-prod  
-   with 1 private node and 1 public node which will run traefik  
+   With 1 private node and 1 public node running traefik, RBAC enabled, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
    Apache and NGINX via host based ingress   
-   Configuration: RBAC enabled, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
 
 4. Install a K8s cluster named /dev/kubernetes-dev   
    1 private and 0 public nodes, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
