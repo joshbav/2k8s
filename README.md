@@ -97,6 +97,6 @@ begin demo
 11. Enable HA on dev k8's, not prod. 
 12. Show nodes screen and dashboard
 13. Show Networking -> Services Addresses -> nginx-example.marathon:80, select Connection Latency drop down
-14. [K8s RBAC lab]](https://github.com/joshbav/2k8s/ks-rbac.md)
+14. [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
 
 
