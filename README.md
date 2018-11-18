@@ -95,7 +95,7 @@ begin demo
    Switch to GUI, talk about it  
    TODO: why doens't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
 10. Increase private node count in prod k8s to 2 via GUI
-11. Enable HA on dev k8's, not prod. 
+11. Enable HA on dev k8's via GUI. 
 12. Show nodes screen and dashboard
 13. Show Networking -> Services Addresses -> nginx-example.marathon:80, select Connection Latency drop down
 14. [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
