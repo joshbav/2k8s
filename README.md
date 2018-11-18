@@ -83,6 +83,7 @@ begin demo
    wait 10  
    dcos cassandra --name=/cassandra plan status recovery  
    dcos cassandra --name=/cassandra update start --package-version=2.4.0-3.0.16  
+   todo: why doesn't that work when 2.3.0 was the installed version? it seems to upgrade to 2.3.0 from 2.3.0??  
    wait 10  
    dcos cassandra --name=/cassandra update status  
    dcos cassandra --name=/cassandra plan start repair  
