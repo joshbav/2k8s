@@ -1,7 +1,7 @@
 #### A K8S RBAC TUTORIAL
 Revision 11-17-18 
 
-Goal: create new role named dev-ops, using existing cluster role binding view, then change its role to a new role we will create that has more access but it still read only.
+Goal: Create new role "dev-ops" cluster role binding using existing cluster role "view", then create a new cluster role "dev-ops" and change the dev-ops cluster role binding to use the new dev-ops cluster role, so it can do kubectl describes in order to get more detailed information that the cluster role view does not provide. (TODO: rewrite, add explanations of the objects and links to k8s docs, begin with an example)
 
 Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to test RBAC.
 
