@@ -2,32 +2,31 @@
 Revision 11-17-18
 
 This is a script for Enterprise DC/OS 1.12 that will setup two Kubernetes clusters  
-This script has only been tested on OS X and with DC/OS 1.12  
+This script has only been tested on OSX with DC/OS 1.12 Enterprise Edition  
 
 This script will:
 
-1. Install Edge-LB with a configuration for kubectl for the two K8s clusters
+1. Install Edge-LB with a configuration to enable proxying kubectl to the two K8s clusters
 
 2. Install Mesosphere Kubernetes Engine (MKE)
 
 3. Install a K8s cluster named /prod/kubernetes-prod  
-   With 1 private node and 1 public node running traefik, RBAC enabled, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
+   1 private node, 1 public node running traefik, RBAC enabled, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
    Apache and NGINX via host based ingress   
 
 4. Install a K8s cluster named /dev/kubernetes-dev   
    1 private and 0 public nodes, control plane CPU lowered to 0.5, private reserved resources kube cpus lowered to 1  
-
 5. Install a Cassandra cluster named /cassandra  
-   With stock configuration (3 nodes)  
+   Stock configuration (3 nodes)  
 
 6. Install Jenkins to Marathon named /dev/jenkins  
-   With Jenkins master CPU lowered to 0.2  
+   Jenkins master CPU lowered to 0.2  
 
-7. Install an allocation loader to Marathon named /allocation-load so the dashboard entires are not flat
+7. Install an allocation loader to Marathon named /allocation-load, so the dashboard entires are not flat
 
-8. Install a DC/OS license file, if it exists
+8. Install a DC/OS license, if it exists
 
-9. Install an SSH key via ssh-add, if it exists
+9. Install an SSH key to the workstation via ssh-add, if it exists
 
 Your existing kubectl config file will be moved to /tmp/kubectl-config
 
@@ -78,7 +77,7 @@ Begin demo
 4. Upgrade dev k8s  
    dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
    Switch to GUI, talk about it  
-   TODO: why doesn't this work? dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
+   TODO: why doesn't this work?: dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
 
 4. Enable HA on dev k8's via GUI.
 
@@ -95,7 +94,6 @@ Begin demo
    wait 10  
    dcos cassandra --name=/cassandra plan status recovery  
    dcos cassandra --name=/cassandra update start --package-version=2.4.0-3.0.16  
-   todo: why doesn't that work when 2.3.0 was the installed version? it seems to upgrade to 2.3.0 from 2.3.0??  
    wait 10  
    dcos cassandra --name=/cassandra update status  
    dcos cassandra --name=/cassandra plan start repair  
@@ -105,10 +103,12 @@ Begin demo
    dcos cassandra --name=/cassandra update status (show 4th node is being added) 
 
 10. Increase private node count in prod k8s to 2 via GUI
-
+    Show slide of what it takes to add a node manually. Compare us to a cloud operator.
+    
 11. K8s self healing demo https://github.com/ably77/dcos-se/tree/master/Kubernetes/mke#automated-self-healing  
 
 12. Show nodes screen and dashboard
+    Find a node that has components from both K8s clusters (this is a bit hard, TODO, consider an API search script? or grow both clusters so they have to overlap?)
 
 13. Show Networking -> Services Addresses -> nginx-example.marathon:80, select Connection Latency drop down
 

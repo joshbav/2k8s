@@ -83,10 +83,7 @@ echo "The DC/OS CLI and kubectl must already be installed, it will be configured
 echo "$MASTER_URL"
 echo "with user name $DCOS_USER and password $DCOS_PASSWORD"
 echo
-echo "The user name that ran this script is $USER"
-echo "and file ownership for kubectl and DC/OS CLI files will be chown'ed to that user"
-
-
+echo "The user name that ran this script is $USER so file ownership for kubectl and DC/OS CLI files will be chown'ed to $SUDO_USER"
 
 #### MOVE DCOS CLI CLUSTERS TO /TMP/CLUSTERS
 
@@ -251,8 +248,6 @@ else
 fi
 
 echo "**** Adding entries to /etc/hosts for www.apache.test and www.nginx.test for $EDGELB_PUBLIC_AGENT_IP"
-echo "     sudo may be needed, please enter your root password if prompted"
-
 echo "$EDGELB_PUBLIC_AGENT_IP www.apache.test" >> /etc/hosts
 echo "$EDGELB_PUBLIC_AGENT_IP www.nginx.test" >> /etc/hosts
 # to bypass DNS & hosts file: curl -H "Host: www.apache.test" $EDGELB_PUBLIC_AGENT_IP
@@ -329,7 +324,7 @@ echo "     since it takes a while for kubernetes to be installed (~ 360 seconds)
 echo
 # Sometimes I open another shell while waiting, since this is the biggest delay,
 # so let's fix the dcos cli and kubectl now (and at the end of the script)
-chown -RH $USER ~/.kube ~/.dcos
+chown -RH $SUDO_USER ~/.kube ~/.dcos
 sleep 330
 seconds=330
 OUTPUT=1
@@ -413,7 +408,6 @@ echo
 echo "**** Running kubectl config get-clusters"
 echo
 kubectl config get-clusters
-# kubectl config use-context prod
 echo
 echo "**** Changing kubectl context back to prod"
 echo
@@ -481,18 +475,18 @@ rm -f public-key.pem 2> /dev/null
 # This script is ran via sudo since /etc/hosts is modified. But it also sets up kubectl and the dcos CLI
 # which means some of those files now belong to root
 
-## $REAL_OWNER=$(ls -ld ~/.bash_history | awk 'NR==1 {print $3}')
 echo
-echo "**** Running chown -RH on ~/.kube and ~/.dcos since this script is ran via sudo"
+echo "**** Running chown -RH $SUDO_USER ~/.kube ~/.dcos since this script is ran via sudo"
 echo
-# If you ever break out of this script, you must run these 2 commands via sudo:
-chown -RH $USER ~/.kube ~/.dcos
+# If you ever break out of this script, you must run this command:
+chown -RH $SUDO_USER ~/.kube ~/.dcos
 
 echo
 echo
 echo
 echo "**** FINISHED"
-echo "     You can point your browser to www.apache.test and www.nginx.test"
+echo "     Opening your browser to www.apache.test and www.nginx.test"
 echo "     You might need to wait up to 30 seconds first for everything to finish installing"
 echo
-
+open "http://www.apache.test"
+open "http://www.nginx.test"
