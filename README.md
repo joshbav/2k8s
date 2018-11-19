@@ -24,9 +24,13 @@ This script will:
 
 7. Install an allocation loader to Marathon named /allocation-load, so the dashboard entires are not flat
 
-8. Install a DC/OS license, if it exists
+8. Adds dev and prod groups, and dev-user and prod-user (password deleteme), with rights onto to those folders.
 
-9. Install an SSH key to the workstation via ssh-add, if it exists
+9. Adds an example binary secret /binary-secret
+
+10. Install a DC/OS license, if it exists
+
+11. Install an SSH key to the workstation via ssh-add, if it exists
 
 Your existing kubectl config file will be moved to /tmp/kubectl-config
 
@@ -114,6 +118,8 @@ Begin demo
 
 13. Show Networking -> Services Addresses -> nginx-example.marathon:80, select Connection Latency drop down
 
-14. [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
+14. Show file based secret, dcos security secrets get /binary-secret
+
+?? . [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
 
 
