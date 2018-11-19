@@ -52,15 +52,17 @@ The DC/OS CLI and kubectl must already be installed
 
 #### USAGE
 
-1. Start a cluster, such as in CCM. Minimum of 7 private agents, only 1 public agent, DC/OS EE 1.12
+1. Start a cluster, such as in CCM. Minimum of 7 private agents, only 1 public agent, DC/OS EE 1.12  
 
-2. Copy the master's URL to your clipboard. If it begins with HTTP the script will change it to HTTPS.
+2. Ports 6443 and 6444 must be reachable directly to the public agent, so if using the Terraform installer this is a mandatory change. If using CCM this is not necessary.  
 
-3. `sudo ./runme <MASTER_URL>`
+3. Copy the master's URL to your clipboard. If it begins with HTTP the script will change it to HTTPS.
 
-4. Wait for it to finish (~ 7 min)
+4. `sudo ./runme <MASTER_URL>`
 
-5. Open your browser to www.apache.test and/or www.nginx.test
+5. Wait for it to finish (~ 7 min)
+
+6. Open your browser to www.apache.test and/or www.nginx.test
 
 #### DEMO
 
