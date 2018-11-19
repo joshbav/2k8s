@@ -3,7 +3,7 @@ Revision 11-17-18
 
 Goal: create new role named dev-ops, using existing cluster role binding view, then change its role to a new role we will create that has more access but it still read only.
 
-Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to configure RBAC.
+Note: kubectl auth can-i <verb> <object> --as <object> is a handy way to test RBAC.
 
 Let's test if the dev-ops user (actually service account) can do 'kubectl get pod' commands:  
 `kubectl auth can-i get pods --as dev-ops`  
