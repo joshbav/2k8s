@@ -66,7 +66,7 @@ The DC/OS CLI and kubectl must already be installed
 
 #### DEMO
 
-This is an incomplete section, ignore it.
+This is an incomplete section, ignore it, until it's no longer a work in progress. 
 
 1. Deploy older cassandra via GUI before running script, then in AWS kill instance with node 1.
 
