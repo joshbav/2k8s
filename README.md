@@ -1,5 +1,5 @@
 ### SETUP SCRIPT FOR TWO K8S CLUSTERS ON DC/OS ("2k8s") 
-Revision 11-17-18
+Revision 11-17-18 (initial release). NOTE: Updates will have a change log.
 
 This is a script for Enterprise DC/OS 1.12 that will setup two Kubernetes clusters  
 This script has only been tested on OSX with DC/OS 1.12 Enterprise Edition  
