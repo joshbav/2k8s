@@ -206,7 +206,7 @@ kind: PodDisruptionBudget
 # Cluster managers, hosting providers, etc should use tools which respect Pod Disruption Budgets 
 #   by calling the Eviction API instead of directly deleting pods, for voluntary actions.
 # Involuntary actions also count against the budget. 
-# The kubectl drain command utilized pod disruption budgets
+# The kubectl drain command utilizes pod disruption budgets
 # Pods which are deleted or unavailable due to a rolling upgrade to an application do count 
 #   against the disruption budget, but controllers (like deployment and stateful-set) are not 
 #   limited by PDBs when doing rolling upgrade.
