@@ -225,7 +225,7 @@ echo Public IP of Edge-LB node is: $EDGELB_PUBLIC_AGENT_IP
 #### SETUP HOSTS FILE FOR APACHE AND NGINX
 
 echo
-echo "**** Copying /etc/hosts to /tmp/hosts as a backup, deleting /tmp/hosts if it exists"
+echo "**** Copying /etc/hosts to /tmp/hosts as a backup, first deleting /tmp/hosts if it exists"
 echo
 rm -f /tmp/hosts 2> /dev/null
 cp /etc/hosts /tmp
