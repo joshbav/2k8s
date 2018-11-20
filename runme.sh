@@ -25,7 +25,8 @@ DCOS_PASSWORD="deleteme"
 #### TEST IF RAN AS ROOT
 
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root, via sudo" 
+   echo "This script must be run as root, via sudo, because it will add two entries to /etc/hosts:" 
+   echo "www.apache.test & www.nginx.test"
    exit 1
 fi
 
