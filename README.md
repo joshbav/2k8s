@@ -81,7 +81,7 @@ Begin demo
 3. Explain HDMK, show RBAC, secrets, etc.
 
 4. Upgrade dev k8s  
-   dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
+   dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.3 --yes  
    Switch to GUI, talk about it  
    TODO: why doesn't this work?: dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
 
@@ -122,4 +122,8 @@ Begin demo
 
 ?? . [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
 
-
+??. Spark demo from CLI:
+    dcos package install spark --yes
+    dcos spark run --submit-args="--class org.apache.spark.examples.SparkPi https://downloads.mesosphere.com/spark/assets/spark-examples_2.11-2.0.1.jar 30"
+    dcos spark log <job ID>
+    dcos package uninstall spark --yes

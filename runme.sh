@@ -1,18 +1,17 @@
 #!/bin/bash
 
 ###### TEMPORARY SECTION
-# list files, document their differences
+# maybe add ssh tunnel with & to make k8s gui accessible? auto launch the gui?
 # todo: pull in other todos, version
 # what permissions does MKE need in its service account? is it for a team's k8s, or for all k8s?
-# new prod: rbac, controplane cpu lowered to 0.5, priv reserved kube cpus lowered to 1, public node count raised to 1, 
 # incorporate k8s autoscaler demo
 
 
 ######## VARIABLES ########
 
-SCRIPT_VERSION="NOV-17-18"
+SCRIPT_VERSION="NOV-28-18"
 LICENSE_FILE="dcos-1-12-license-50-nodes.txt"
-EDGE_LB_VERSION="1.2.2"
+EDGE_LB_VERSION="1.2.3"
 K8S_MKE_VERSION="2.0.0-1.12.1"
 K8S_PROD_VERSION="2.0.0-1.12.1"
 K8S_DEV_VERSION="2.0.0-1.12.1"
@@ -321,7 +320,7 @@ dcos package install cassandra --package-version=$CASSANDRA_VERSION --cli --yes
 
 echo
 echo "**** Sleeping for 330 seconds before testing if K8s install of /prod/kubernetes-prod is done,"
-echo "     since it takes a while for kubernetes to be installed (~ 360 seconds)"
+echo "     since it takes a while for kubernetes to be installed (~ 370 seconds)"
 echo
 # Sometimes I open another shell while waiting, since this is the biggest delay,
 # so let's fix the dcos cli and kubectl now (and at the end of the script)
