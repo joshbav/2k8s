@@ -42,6 +42,8 @@ Your existing DC/OS cluster configs will be moved to /tmp/clusters because of a 
 
 The DC/OS CLI and kubectl must already be installed
 
+TO DO: Add Jupyter to this
+
 #### SETUP
 
 1. Clone this repo  
