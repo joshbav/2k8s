@@ -3,20 +3,18 @@
 ###### TEMPORARY SECTION
 # maybe add ssh tunnel with & to make k8s gui accessible? auto launch the gui?
 # todo: pull in other todos, version
-# what permissions does MKE need in its service account? is it for a team's k8s, or for all k8s?
-# incorporate k8s autoscaler demo
-
 
 ######## VARIABLES ########
 
-SCRIPT_VERSION="NOV-28-18"
+SCRIPT_VERSION="DEC-10-18"
 LICENSE_FILE="dcos-1-12-license-50-nodes.txt"
 EDGE_LB_VERSION="1.2.3"
 K8S_MKE_VERSION="2.0.0-1.12.1"
-K8S_PROD_VERSION="2.0.0-1.12.1"
-K8S_DEV_VERSION="2.0.0-1.12.1"
+K8S_PROD_VERSION="2.0.1-1.12.2"
+K8S_DEV_VERSION="2.0.1-1.12.2"
 CASSANDRA_VERSION="2.3.0-3.0.16"
 JENKINS_VERSION="3.5.2-2.107.2"
+# This script is ran via sudo, so don't use ~
 SSH_KEY_FILE="/Users/josh/ccm-priv.key"
 DCOS_USER="bootstrapuser"
 DCOS_PASSWORD="deleteme"
@@ -320,7 +318,7 @@ dcos package install cassandra --package-version=$CASSANDRA_VERSION --cli --yes
 
 echo
 echo "**** Sleeping for 330 seconds before testing if K8s install of /prod/kubernetes-prod is done,"
-echo "     since it takes a while for kubernetes to be installed (~ 370 seconds)"
+echo "     since it takes a while for kubernetes to be installed (>370 seconds)"
 echo
 # Sometimes I open another shell while waiting, since this is the biggest delay,
 # so let's fix the dcos cli and kubectl now (and at the end of the script)
@@ -481,12 +479,40 @@ echo
 # If you ever break out of this script, you must run this command:
 chown -RH $SUDO_USER ~/.kube ~/.dcos
 
-echo
-echo
-echo
-echo "**** FINISHED"
-echo "     Opening your browser to www.apache.test and www.nginx.test"
-echo "     You might need to wait up to 30 seconds first for everything to finish installing"
+echo "**** Opening browser window for www.nginx.test, www.apache.test" 
 echo
 open "http://www.apache.test"
 open "http://www.nginx.test"
+
+echo
+echo "**** Copying ~/.kube/config to /tmp/kubeconfig"
+echo
+rm -f /tmp/kubeconfig 2> /dev/null
+# Copying to /tmp so the open file window in the browser can easily access it
+# otherwise it's difficult getting to the hidden ~/.kube directory
+cp /Users/$SUDO_USER/.kube/config /tmp/kubeconfig
+chown $SUDO_USER /tmp/kubeconfig
+
+echo
+echo "**** Starting kubectl proxy"
+echo "     Killing any existing kubectl process, in case the proxy is still running"
+pkill kubectl 2 >/dev/null
+sleep 1
+sudo -u $SUDO_USER kubectl proxy --request-timeout=0 & 2>/dev/null  
+
+echo
+echo "**** Opening browser window for K8s dashboard for /prod/kubernetes-prod"
+echo "     It's http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/"
+echo "     To login provide the kubectl config file of /tmp/kubeconfig"
+open "http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/"
+echo
+echo "     You should now open a different terminal window to use kubectl,"
+echo "     because sometimes kubectl proxy creates errors on screen of:" 
+echo "     Unsolicited response received on idle HTTP channel starting with \"HTTP/1.0 408 Request Time-out..."
+echo
+echo "     When done you can kill kubectl proxy with:   pkill kubectl"
+echo
+echo "SCRIPT HAS FINISHED" 
+echo "YOU SHOULD NOW OPEN A NEW TERMINAL WINDOWS TO USE KUBECTL, per the warning above"
+echo
+

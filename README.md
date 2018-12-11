@@ -1,8 +1,8 @@
 ### SETUP SCRIPT FOR TWO K8S CLUSTERS ON DC/OS ("2k8s") 
-Revision 11-17-18 (initial release). NOTE: Updates will have a change log.
+Revision 12-10-18
 
 This is a script for Enterprise DC/OS 1.12 that will setup two Kubernetes clusters  
-This script has only been tested on OSX with DC/OS 1.12 Enterprise Edition  
+This script has only been tested on OSX with DC/OS 1.12.0 Enterprise Edition  
 
 This script will:
 
@@ -83,7 +83,7 @@ Begin demo
 3. Explain HDMK, show RBAC, secrets, etc.
 
 4. Upgrade dev k8s  
-   dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.0.1-1.12.2 --yes  
+   dcos kubernetes cluster update --cluster-name=dev/kubernetes-dev --package-version=2.1.0-1.12.3 --yes  
    Switch to GUI, talk about it  
    TODO: why doesn't this work?: dcos kubernetes cluster debug plan status update --cluster-name=dev/kubernetes-dev
 
