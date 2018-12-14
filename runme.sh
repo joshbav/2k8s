@@ -1,9 +1,5 @@
 #!/bin/bash
 
-###### TEMPORARY SECTION
-# maybe add ssh tunnel with & to make k8s gui accessible? auto launch the gui?
-# todo: pull in other todos, version
-
 ######## VARIABLES ########
 
 SCRIPT_VERSION="DEC-10-18"
