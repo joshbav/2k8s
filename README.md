@@ -135,5 +135,5 @@ Begin demo
 ??. Spark demo from CLI:  
     dcos package install spark --yes  
     dcos spark run --submit-args="--class org.apache.spark.examples.SparkPi https://downloads.mesosphere.com/spark/assets/spark-examples_2.11-2.0.1.jar 30"  
-    dcos spark log <job ID>  
+    dcos spark log (job ID)  
     dcos package uninstall spark --yes  
