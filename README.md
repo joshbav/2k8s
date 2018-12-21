@@ -132,8 +132,8 @@ Begin demo
 
 ?? . [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
 
-??. Spark demo from CLI: 
-    dcos package install spark --yes 
-    dcos spark run --submit-args="--class org.apache.spark.examples.SparkPi https://downloads.mesosphere.com/spark/assets/spark-examples_2.11-2.0.1.jar 30" 
-    dcos spark log <job ID> 
-    dcos package uninstall spark --yes 
+??. Spark demo from CLI:  
+    dcos package install spark --yes  
+    dcos spark run --submit-args="--class org.apache.spark.examples.SparkPi https://downloads.mesosphere.com/spark/assets/spark-examples_2.11-2.0.1.jar 30"  
+    dcos spark log <job ID>  
+    dcos package uninstall spark --yes  
