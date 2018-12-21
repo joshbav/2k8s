@@ -32,6 +32,10 @@ This script will:
 
 11. Install an SSH key to the workstation via ssh-add, if it exists
 
+12. Start kubectl proxy and rewuire you to open a second terminal window.
+
+13. Start your browser with www.apache.test and www.nginx.test and the K8s dashboard.
+
 Your existing kubectl config file will be moved to /tmp/kubectl-config
 
 Your existing /etc/hosts will be backed up to /tmp/hosts before being modified with new entries for www.apache.test and www.nginx.test
@@ -42,7 +46,9 @@ Your existing DC/OS cluster configs will be moved to /tmp/clusters because of a 
 
 The DC/OS CLI and kubectl must already be installed
 
-TO DO: Add Jupyter to this
+TO DO: Add Jupyter to this, need to require 2nd public agent since MarathonLB must be used for Jypyter at the moment. The jira for edgelb config doesn't seem to work. 
+
+TO DO: Rename K8s nginx to nginx-deployment like apache.
 
 #### SETUP
 
@@ -68,7 +74,9 @@ TO DO: Add Jupyter to this
 
 5. Wait for it to finish (~ 7 min)
 
-6. Open your browser to www.apache.test and/or www.nginx.test
+6. It will open your browser to www.apache.test and www.nginx.test and the K8s dashboard for /prod/kubernetes-prod. 
+
+7. In the K8s dashboard select the file /tmp/kubeconfig to authenticate.
 
 #### DEMO
 
@@ -124,8 +132,8 @@ Begin demo
 
 ?? . [K8s RBAC lab](https://github.com/joshbav/2k8s/blob/master/k8s-rbac.md)
 
-??. Spark demo from CLI:
-    dcos package install spark --yes
-    dcos spark run --submit-args="--class org.apache.spark.examples.SparkPi https://downloads.mesosphere.com/spark/assets/spark-examples_2.11-2.0.1.jar 30"
-    dcos spark log <job ID>
-    dcos package uninstall spark --yes
+??. Spark demo from CLI: 
+    dcos package install spark --yes 
+    dcos spark run --submit-args="--class org.apache.spark.examples.SparkPi https://downloads.mesosphere.com/spark/assets/spark-examples_2.11-2.0.1.jar 30" 
+    dcos spark log <job ID> 
+    dcos package uninstall spark --yes 
